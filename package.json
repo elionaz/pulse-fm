@@ -42,7 +42,8 @@
       "RefreshNow": 60,
       "LastfmUsername": 70,
       "LastfmApiKey": 71,
-      "RefreshMinutes": 72
+      "RefreshMinutes": 72,
+      "Mode": 73
     },
     "resources": {
       "media": [

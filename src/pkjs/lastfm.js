@@ -151,4 +151,53 @@ function getRecentTrack(username, apiKey, callback) {
   });
 }
 
-module.exports = { getRecentTrack: getRecentTrack };
+// period: "7day" | "1month" | "3month" | "6month" | "12month" | "overall"
+function getTopAlbum(username, apiKey, period, callback) {
+  if (!username || !apiKey) {
+    return callback(new Error('missing credentials'));
+  }
+  var url = BASE +
+    '?method=user.gettopalbums' +
+    '&user=' + encodeURIComponent(username) +
+    '&period=' + encodeURIComponent(period) +
+    '&api_key=' + encodeURIComponent(apiKey) +
+    '&format=json' +
+    '&limit=1';
+
+  jsonGet(url, function(err, data) {
+    if (err) return callback(err);
+    var albums = data && data.topalbums && data.topalbums.album;
+    if (!albums) return callback(new Error('no top albums'));
+    var top = Array.isArray(albums) ? albums[0] : albums;
+    if (!top) return callback(new Error('empty top albums'));
+
+    var artist = ((top.artist && (top.artist.name || top.artist['#text'])) || '').trim();
+    var album  = (top.name || '').trim();
+    var trackImg = pickLargestImage(top.image);
+
+    var base = {
+      title:      album.slice(0, 99),  // shown in song slot
+      artist:     artist.slice(0, 99),
+      album:      album.slice(0, 99),
+      nowPlaying: false,
+      timestamp:  0,
+    };
+
+    if (!isPlaceholderUrl(trackImg)) {
+      console.log('[pulse.fm] lastfm: top-album image ' + trackImg);
+      base.imageUrl = trackImg;
+      return callback(null, base);
+    }
+
+    console.log('[pulse.fm] lastfm: top-album image missing, resolving fallback chain');
+    resolveFallbackImage(apiKey, artist, album, function(img) {
+      base.imageUrl = img;
+      callback(null, base);
+    });
+  });
+}
+
+module.exports = {
+  getRecentTrack: getRecentTrack,
+  getTopAlbum:    getTopAlbum,
+};

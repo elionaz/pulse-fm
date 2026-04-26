@@ -18,8 +18,11 @@ function readSettings() {
   return {
     username: String(raw.LastfmUsername || '').trim(),
     apiKey:   String(raw.LastfmApiKey   || '').trim(),
+    mode:     String(raw.Mode || 'realtime'),
   };
 }
+
+var PERIOD_BY_MODE = { top7: '7day', top30: '1month' };
 
 // ----- polling -----
 
@@ -29,30 +32,31 @@ function pollAll() {
     console.log('[pulse.fm] no credentials yet — open settings');
     return;
   }
-  console.log('[pulse.fm] polling for user ' + s.username);
-  fetchTrack(s);
+  console.log('[pulse.fm] polling for user ' + s.username + ' mode=' + s.mode);
+  fetchAndPush(s);
   fetchWeather();
 }
 
-function fetchTrack(s) {
-  lastfm.getRecentTrack(s.username, s.apiKey, function(err, track) {
+function fetchAndPush(s) {
+  function handle(err, data) {
     if (err) {
-      console.log('[pulse.fm] track err: ' + err.message);
+      console.log('[pulse.fm] fetch err: ' + err.message);
       sendError('lastfm: ' + err.message);
       return;
     }
-    if (!track) return;
-    console.log('[pulse.fm] track: ' + track.artist + ' - ' + track.title +
-                (track.nowPlaying ? ' (now)' : ''));
+    if (!data) return;
+
+    console.log('[pulse.fm] data: ' + data.artist + ' - ' + data.title +
+                (data.nowPlaying ? ' (now)' : ''));
     Pebble.sendAppMessage({
-      'TrackTitle':       track.title,
-      'TrackArtist':      track.artist,
-      'TrackAlbum':       track.album,
-      'TrackNowPlaying':  track.nowPlaying ? 1 : 0,
-      'TrackTimestamp':   track.timestamp || 0,
+      'TrackTitle':       data.title,
+      'TrackArtist':      data.artist,
+      'TrackAlbum':       data.album,
+      'TrackNowPlaying':  data.nowPlaying ? 1 : 0,
+      'TrackTimestamp':   data.timestamp || 0,
     }, function() {
-      if (track.imageUrl) {
-        imageXfer.sendImageFromUrl(track.imageUrl);
+      if (data.imageUrl) {
+        imageXfer.sendImageFromUrl(data.imageUrl);
       } else {
         console.log('[pulse.fm] no image url after fallbacks, telling watch to use bundled');
         Pebble.sendAppMessage({ 'ImageSkipped': 1 });
@@ -61,7 +65,14 @@ function fetchTrack(s) {
     }, function() {
       console.log('[pulse.fm] track msg failed');
     });
-  });
+  }
+
+  var period = PERIOD_BY_MODE[s.mode];
+  if (period) {
+    lastfm.getTopAlbum(s.username, s.apiKey, period, handle);
+  } else {
+    lastfm.getRecentTrack(s.username, s.apiKey, handle);
+  }
 }
 
 function fetchWeather() {
