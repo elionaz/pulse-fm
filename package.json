@@ -1,0 +1,57 @@
+{
+  "name": "pulse-fm",
+  "author": "Eli Onaz",
+  "version": "0.1.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {
+    "jpeg-js": "^0.3.7",
+    "pebble-clay": "^1.0.4"
+  },
+  "pebble": {
+    "displayName": "Pulse.fm",
+    "uuid": "19a72e5a-dc41-4cf9-8cd3-f16cfedd7fd7",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": ["emery"],
+    "watchapp": {
+      "watchface": true
+    },
+    "capabilities": ["location", "configurable"],
+    "messageKeys": {
+      "JsReady": 0,
+      "TrackTitle": 10,
+      "TrackArtist": 11,
+      "TrackAlbum": 12,
+      "TrackNowPlaying": 13,
+      "TrackTimestamp": 14,
+      "Temperature": 20,
+      "WeatherCode": 21,
+      "ImageWidth": 30,
+      "ImageHeight": 31,
+      "ImageDataSize": 32,
+      "ImageChunksTotal": 33,
+      "ImageChunkIndex": 34,
+      "ImageChunkData": 35,
+      "ImageSkipped": 36,
+      "ErrorMsg": 40,
+      "StatusMsg": 41,
+      "TempUnit": 50,
+      "ShowDate": 51,
+      "ShowBattery": 52,
+      "RefreshNow": 60,
+      "LastfmUsername": 70,
+      "LastfmApiKey": 71,
+      "RefreshMinutes": 72
+    },
+    "resources": {
+      "media": [
+        {
+          "type": "bitmap",
+          "name": "FALLBACK_COVER",
+          "file": "images/fallback.png"
+        }
+      ]
+    }
+  }
+}

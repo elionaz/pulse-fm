@@ -1,0 +1,20 @@
+# Build artifacts
+build/
+.lock-waf*
+
+# Node
+node_modules/
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# AI assistant scaffolding (kept local only)
+CLAUDE.md
+.cursor/
+
+# Dev screenshots in repo root (curated ones live in screenshots/)
+/*.png
+/*.jpg
+/*.jpeg
