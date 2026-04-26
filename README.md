@@ -13,7 +13,8 @@ artwork is missing and a configurable refresh interval.
 
 ## Features
 
-- Now-playing track from Last.fm (or last scrobble when nothing's playing)
+- Three display modes: now-playing/last scrobble, top album of past 7 days,
+  top album of past 30 days
 - Album cover (128×128, color-quantized to Pebble's 64-color palette)
 - Image fallback: track → album → artist → bundled cover
 - Time, date, battery, BT-disconnected indicator

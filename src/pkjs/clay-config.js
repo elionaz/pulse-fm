@@ -30,6 +30,23 @@ module.exports = [
   {
     "type": "section",
     "items": [
+      { "type": "heading", "defaultValue": "Display mode" },
+      {
+        "type": "select",
+        "messageKey": "Mode",
+        "label": "Show",
+        "defaultValue": "realtime",
+        "options": [
+          { "label": "Now playing / last track", "value": "realtime" },
+          { "label": "Top album — past 7 days",  "value": "top7"     },
+          { "label": "Top album — past 30 days", "value": "top30"    }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "items": [
       { "type": "heading", "defaultValue": "Refresh" },
       {
         "type": "select",
