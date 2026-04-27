@@ -24,6 +24,15 @@ var inProgress = false;
 var inProgressStart = 0;
 var STUCK_TIMEOUT_MS = 30000;
 
+// Last.fm hosts album art as either JPEG or PNG depending on the original
+// upload. We only ship a JPEG decoder (jpeg-js) — adding a PNG decoder would
+// pull in an ES6 lib the SDK bundler can't parse. Fortunately the Last.fm
+// CDN converts on-demand: requesting the same hash with `.jpg` returns the
+// image re-encoded as JPEG. Rewrite the extension before download.
+function forceJpegUrl(url) {
+  return url.replace(/\.png(\?.*)?$/i, '.jpg$1');
+}
+
 function downloadAndSend(url) {
   if (!url) {
     console.log('[pulse.fm] image: no url, skipping');
@@ -39,6 +48,7 @@ function downloadAndSend(url) {
   }
   inProgress = true;
   inProgressStart = Date.now();
+  url = forceJpegUrl(url);
   console.log('[pulse.fm] image: downloading ' + url);
 
   var xhr = new XMLHttpRequest();
